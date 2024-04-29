@@ -1,8 +1,3 @@
-# Copyright (c) 2008-2016, Stefano Taschini <taschini@ieee.org> 
-# All rights reserved.
-# See LICENSE for details.
-# ;)
-
 """\
 ``interval.fpu`` --- FPU control and helper functions
 -----------------------------------------------------
@@ -14,10 +9,6 @@ This module provides:
 
   2. Helper functions that respect IEEE 754 semantics.
 
-Limitations
-    The current implementation of the FPU's rounding-mode control is
-    thought to be not thread-safe.
-
 """
 
 float = float
@@ -25,7 +16,7 @@ _min = min
 _max = max
 
 
-def _init_libm():  # pragma: nocover
+def _init_libm():
     "Initialize low-level FPU control using C99 primitives in libm."
     global _fe_upward, _fe_downward, _fegetround, _fesetround
 
@@ -44,7 +35,7 @@ def _init_libm():  # pragma: nocover
     _fegetround, _fesetround = libm.fegetround, libm.fesetround
 
 
-def _init_msvc():  # pragma: nocover
+def _init_msvc():
     "Initialize low-level FPU control using the Microsoft VC runtime."
     global _fe_upward, _fe_downward, setup, _fegetround, _fesetround
 
@@ -60,7 +51,7 @@ def _init_msvc():  # pragma: nocover
         _controlfp(flag, 0x300)
 
 
-def _init():  # pragma: nocover
+def _init():
     "Initialize low-level FPU control using the appropriate library."
 
     for f in _init_libm, _init_msvc:
@@ -81,11 +72,7 @@ _init()
 
 def infinity():
     global infinity, nan
-    try:
-        infinity = float('inf')
-    except:  # pragma: nocover; useful only for Python < 2.6
-        import struct
-        infinity = struct.unpack('!d', b'\x7f\xf0\x00\x00\x00\x00\x00\x00')[0]
+    infinity = float('inf')
     nan = infinity / infinity
 infinity()
 
@@ -145,14 +132,10 @@ def max(l):
 
 try:
     long
-except NameError:  # pragma: PY3 only
+except NameError:
     def isinteger(n):
         "True if the argument is an instance of an integer type."""
         return isinstance(n, int)
-else:              # pragma: PY2 only
-    def isinteger(n):
-        "True if the argument is an instance of an integer type."""
-        return isinstance(n, (int, long))
 
 
 def power_rn(x, n):
